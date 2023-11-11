@@ -24,6 +24,9 @@ VALUES ("Jane", "Doe", 1,NULL),
 ("Sarah", "Lourd", 7,NULL),
 ("Tom", "Allen", 8, 7);
 
+DELETE FROM employee WHERE id = 10;
 
-
-
+SELECT employee.id, role.title, department.department, role.salary 
+FROM ((employee
+INNER JOIN role ON employee.role_id = role.id)
+INNER JOIN department ON role.department_id = department.id) ORDER BY id ASC;

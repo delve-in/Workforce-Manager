@@ -48,12 +48,38 @@ async function init() {
     }
 }
 
+async function executeQuery(sql, values){
+    return new Promise(async (resolve, reject) => {
+        try{
+          const result = await db.query(sql, values);
+          resolve(result);
+        } catch (err) {
+            console.error('Database query error', err);
+            reject(err);
+        }
+    });
+}
+
 async function viewEmployees() {
     let query = await db.query(select);
     const [data] = query;
     console.table(data);
     init();
 };
+
+async function viewRoles() {
+    let query = await db.query(`SELECT employee.id, role.title, department.department, role.salary 
+                                FROM ((employee
+                                INNER JOIN role ON employee.role_id = role.id)
+                                INNER JOIN department ON role.department_id = department.id) ORDER BY id ASC;`);
+    const [data] = query;
+    console.table(data) 
+    init();
+}
+
+async function viewDepartments() {
+
+}
 
 async function addEmployee() {
     let query = await db.query(select);
@@ -93,6 +119,28 @@ async function addEmployee() {
             message: "Who is the employee's manager?",
             choices: eNames,
         }
-
     ])
-};
+
+    await executeQuery(
+        `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES(?,?,?,?);`,
+        [add.fName, add.lName, add.role, add.manager])
+        .then(()=> {
+            console.log(`Added ${add.fName} ${add.lName} to the database`);
+            return init();
+        })
+        .catch((err)=> { 
+            console.log ('Failed to add employee');
+        });
+}
+
+async function updateRole() {
+
+}
+
+async function addRole () {
+
+}
+
+async function addDepartment() {
+
+}
