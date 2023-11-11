@@ -95,16 +95,20 @@ async function viewDepartments() {
 }
 
 async function addEmployee() {
-    let query = await db.query(select);
+    let query1 = await db.query(`SELECT * FROM employee;`);
 
-    const [data] = query;
+    const [data1] = query1;
     
-    const eNames = data.map(employee => ({
+    const eNames = data1.map(employee => ({
         name: `${employee.first_name} ${employee.last_name}`,
         value: employee.id,
     }));
 
-    const jRole = data.map(role =>({
+    let query2 = await db.query(`SELECT * FROM role;`);
+
+    let [data2] = query2;
+
+    const rTitle = data2.map(role =>({
         name: `${role.title}`,
         value: role.id,
     }));
@@ -124,7 +128,7 @@ async function addEmployee() {
             name: "role",
             type: "list",
             message: "What is employee's role?",
-            choices: jRole,
+            choices: rTitle,
         },
         {
             name: "manager",
@@ -156,23 +160,23 @@ async function updateRole() {
         value: employee.id,
     }));
 
-    const jRole = data.map(role =>({
+    const rTitle = data.map(role =>({
         name: `${role.title}`,
         value: role.id,
     }));
 
     const add = await inquirer.prompt([
         {
-            name: "role",
-            type: "list",
-            message: "Which role do you want to assign the selected employee ?",
-            choices: jRole,
-        },
-        {
             name: "employee",
             type: "list",
             message: "Which employee's role do you want to update?",
             choices: eNames,
+        },
+        {
+            name: "role",
+            type: "list",
+            message: "Which role do you want to assign the selected employee ?",
+            choices: rTitle,
         }
     ])
 
