@@ -16,10 +16,26 @@ const questions = [
         choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department'],
     }
 ];
+console.log(`
 
+██     ██  ██████  ██████  ██   ██ ███████  ██████  ██████   ██████ ███████     
+██     ██ ██    ██ ██   ██ ██  ██  ██      ██    ██ ██   ██ ██      ██          
+██  █  ██ ██    ██ ██████  █████   █████   ██    ██ ██████  ██      █████       
+██ ███ ██ ██    ██ ██   ██ ██  ██  ██      ██    ██ ██   ██ ██      ██          
+ ███ ███   ██████  ██   ██ ██   ██ ██       ██████  ██   ██  ██████ ███████     
+                                                                                
+                                                                                
+███    ███  █████  ███    ██  █████   ██████  ███████ ██████                    
+████  ████ ██   ██ ████   ██ ██   ██ ██       ██      ██   ██                   
+██ ████ ██ ███████ ██ ██  ██ ███████ ██   ███ █████   ██████                    
+██  ██  ██ ██   ██ ██  ██ ██ ██   ██ ██    ██ ██      ██   ██                   
+██      ██ ██   ██ ██   ████ ██   ██  ██████  ███████ ██   ██                                                                                                 
+                                                                                
+`)
 init();
 
 async function init() {
+    console.log()
     const { main } = await inquirer.prompt(questions);
     switch (main) {
         case 'View All Employees':
