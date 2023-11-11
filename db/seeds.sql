@@ -30,3 +30,6 @@ SELECT employee.id, role.title, department.department, role.salary
 FROM ((employee
 INNER JOIN role ON employee.role_id = role.id)
 INNER JOIN department ON role.department_id = department.id) ORDER BY id ASC;
+
+
+UPDATE employee SET employee.role_id = 5 WHERE employee.id = 14;

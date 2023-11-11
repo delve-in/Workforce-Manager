@@ -78,7 +78,12 @@ async function viewRoles() {
 }
 
 async function viewDepartments() {
-
+    let query = await db.query(`SELECT * 
+                                FROM department
+                                ORDER BY id ASC;`);
+    const [data] = query;
+    console.table(data) 
+    init();
 }
 
 async function addEmployee() {
@@ -134,7 +139,45 @@ async function addEmployee() {
 }
 
 async function updateRole() {
+    let query = await db.query(select);
 
+    const [data] = query;
+    
+    const eNames = data.map(employee => ({
+        name: `${employee.first_name} ${employee.last_name}`,
+        value: employee.id,
+    }));
+
+    const jRole = data.map(role =>({
+        name: `${role.title}`,
+        value: role.id,
+    }))
+
+    const add = await inquirer.prompt([
+        {
+            name: "role",
+            type: "list",
+            message: "Which role do you want to assign the selected employee ?",
+            choices: jRole,
+        },
+        {
+            name: "employee",
+            type: "list",
+            message: "Which employee's role do you want to update?",
+            choices: eNames,
+        }
+    ])
+
+    await executeQuery(
+        `UPDATE employee SET employee.role_id = ? WHERE employee.id = ?;`,
+        [add.role, add.employee])
+        .then(()=> {
+            console.log(`Updated employee's role`);
+            return init();
+        })
+        .catch((err)=> { 
+            console.log ('Failed to add employee');
+        });
 }
 
 async function addRole () {
