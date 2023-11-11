@@ -2,11 +2,11 @@ const db = require("./assets/js/connection");
 const inquirer = require('inquirer');
 
 const select = `SELECT e.id, e.first_name, e.last_name, r.title, d.department, r.salary, CONCAT(m.first_name,' ',m.last_name) AS manager_name
-FROM ((employee e
-INNER JOIN role r ON e.role_id = r.id)
-INNER JOIN department d ON r.department_id = d.id)
-LEFT JOIN
-employee m ON e.manager_id = m.id ORDER BY id ASC;`
+                FROM ((employee e
+                INNER JOIN role r ON e.role_id = r.id)
+                INNER JOIN department d ON r.department_id = d.id)
+                LEFT JOIN
+                employee m ON e.manager_id = m.id ORDER BY id ASC;`
 
 const questions = [
     {
@@ -61,7 +61,12 @@ async function executeQuery(sql, values){
 }
 
 async function viewEmployees() {
-    let query = await db.query(select);
+    let query = await db.query(`SELECT e.id, e.first_name, e.last_name, r.title, d.department, r.salary, CONCAT(m.first_name,' ',m.last_name) AS manager_name
+    FROM ((employee e
+    INNER JOIN role r ON e.role_id = r.id)
+    INNER JOIN department d ON r.department_id = d.id)
+    LEFT JOIN
+    employee m ON e.manager_id = m.id ORDER BY id ASC;`);
     const [data] = query;
     console.table(data);
     init();
@@ -99,7 +104,7 @@ async function addEmployee() {
     const jRole = data.map(role =>({
         name: `${role.title}`,
         value: role.id,
-    }))
+    }));
 
     const add = await inquirer.prompt([
         {
@@ -151,7 +156,7 @@ async function updateRole() {
     const jRole = data.map(role =>({
         name: `${role.title}`,
         value: role.id,
-    }))
+    }));
 
     const add = await inquirer.prompt([
         {
@@ -176,14 +181,67 @@ async function updateRole() {
             return init();
         })
         .catch((err)=> { 
-            console.log ('Failed to add employee');
+            console.log (`Failed to add employee's role`);
         });
 }
 
 async function addRole () {
+    let query = await db.query(`SELECT * FROM department ORDER BY department.id ASC;`);
 
+    const [data] = query;
+    
+    const dNames = data.map(department => ({
+        name: `${department.department}`,
+        value: department.id,
+    }));
+
+    const add = await inquirer.prompt([
+        {
+            name: "rName",
+            type: "input",
+            message: "What is the name of the role ?",
+        },
+        {
+            name: "salary",
+            type: "input",
+            message: "What is the Salary of the role ?",
+        },
+        {
+            name: "departmentName",
+            type: "list",
+            message: "Which department does the role belong to ?",
+            choices: dNames,
+        }
+    ])
+
+    await executeQuery(
+        `INSERT INTO role(title, salary, department_id) VALUES (?, ?, ?);`,
+        [add.rName, add.salary, add.departmentName])
+        .then(()=> {
+            console.log(`Added ${add.rName} to the database`);
+            return init();
+        })
+        .catch((err)=> { 
+            console.log ('Failed to add role');
+        });
 }
 
 async function addDepartment() {
+    const add = await inquirer.prompt([
+        {
+            name: "dName",
+            type: "input",
+            message: "What is the name of the department ?",
+        }
+    ])
 
+    await executeQuery(`INSERT INTO department(department) VALUES (?);`,
+        [add.dName])
+        .then(()=> {
+            console.log(`Added ${add.dName} to the database`);
+            return init();
+        })
+        .catch((err)=> { 
+            console.log ('Failed to add department');
+        });
 }
