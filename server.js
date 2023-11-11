@@ -1,12 +1,13 @@
 const db = require("./assets/js/connection");
 const inquirer = require('inquirer');
+const logo = require('./assets/js/logo');
 
 const select = `SELECT e.id, e.first_name, e.last_name, r.title, d.department, r.salary, CONCAT(m.first_name,' ',m.last_name) AS manager_name
                 FROM ((employee e
                 INNER JOIN role r ON e.role_id = r.id)
                 INNER JOIN department d ON r.department_id = d.id)
                 LEFT JOIN
-                employee m ON e.manager_id = m.id ORDER BY id ASC;`
+                employee m ON e.manager_id = m.id ORDER BY id ASC;`;
 
 const questions = [
     {
@@ -16,22 +17,8 @@ const questions = [
         choices: ['View All Employees', 'Add Employee', 'Update Employee Role', 'View All Roles', 'Add Role', 'View All Departments', 'Add Department'],
     }
 ];
-console.log(`
 
-██     ██  ██████  ██████  ██   ██ ███████  ██████  ██████   ██████ ███████     
-██     ██ ██    ██ ██   ██ ██  ██  ██      ██    ██ ██   ██ ██      ██          
-██  █  ██ ██    ██ ██████  █████   █████   ██    ██ ██████  ██      █████       
-██ ███ ██ ██    ██ ██   ██ ██  ██  ██      ██    ██ ██   ██ ██      ██          
- ███ ███   ██████  ██   ██ ██   ██ ██       ██████  ██   ██  ██████ ███████     
-                                                                                
-                                                                                
-███    ███  █████  ███    ██  █████   ██████  ███████ ██████                    
-████  ████ ██   ██ ████   ██ ██   ██ ██       ██      ██   ██                   
-██ ████ ██ ███████ ██ ██  ██ ███████ ██   ███ █████   ██████                    
-██  ██  ██ ██   ██ ██  ██ ██ ██   ██ ██    ██ ██      ██   ██                   
-██      ██ ██   ██ ██   ████ ██   ██  ██████  ███████ ██   ██                                                                                                 
-                                                                                
-`)
+console.log(logo);
 init();
 
 async function init() {
